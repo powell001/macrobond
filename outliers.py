@@ -50,9 +50,9 @@ countries1 = allCountries()
 
 allcountries = []
 for j in countries1:
-    country1 = getCountrySectorData(data1, j)/100000
+    country1 = getCountrySectorData(data1, j)/1000000
     rows = []
-    for i in range(1, country1.shape[1]):
+    for i in range(0, country1.shape[1]):
         colData = scipy.signal.detrend(country1.iloc[:,i].dropna())
         sectorName = country1.columns[i]
 
@@ -61,10 +61,10 @@ for j in countries1:
         std_detrend = colData.std()
 
         # number of obs less than two deviations away from detrended mean
-        outlier_low = len(colData[colData < colData.mean() - 2 * colData.std()])
+        outlier_low = len(colData[colData < colData.mean() - 2.5 * colData.std()])
 
         # number of obs greater than two deviations away from detrended mean
-        outlier_high = len(colData[colData > colData.mean() + 2 * colData.std()])
+        outlier_high = len(colData[colData > colData.mean() + 2.5 * colData.std()])
 
         # trend
         data = country1.iloc[:,i].dropna()
@@ -75,8 +75,10 @@ for j in countries1:
 
         avg_LastFiveYears = country1.iloc[-5:, i].dropna().mean()
 
-        rows.append([j, sectorName, avg_LastFiveYears, trend,  mean_detrend, std_detrend, outlier_low, outlier_high])
-    df = pd.DataFrame(rows, columns=["Country", "Sector", "5yr_Avg", "trend", "mean_detrend", "std_detrend", "outlier_low","outlier_high"])
+        volatility = (std_detrend/avg_LastFiveYears) * 100
+
+        rows.append([j, sectorName, avg_LastFiveYears, trend,  std_detrend, outlier_low, outlier_high, volatility])
+    df = pd.DataFrame(rows, columns=["Country", "Sector", "5yr_Avg (1M)", "trend (1M)", "std_detrend", "outlier_low (2.5 std)","outlier_high (2.5 std", "volatility"])
     allcountries.append(df)
 
-pd.concat(allcountries).to_csv("tmp6.csv")
+pd.concat(allcountries).to_csv("basicStats.csv", index=False)

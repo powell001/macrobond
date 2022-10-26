@@ -28,19 +28,49 @@ def collectSeriesMetaData(myseries, d):
 
     metaData=data1.Metadata
     print("Meta Values: ", metaData.GetFirstValue("Frequency"))
-    #print("First date: ",  data1.DatesAtStartOfPeriod[0])
-    print("First date: ", pd.to_datetime(data1.DatesAtStartOfPeriod[0].strftime('%Y-%m-%d')))
+
     seriesStartDate = pd.to_datetime(data1.DatesAtStartOfPeriod[0].strftime('%Y-%m-%d'))
     seriesEndDate = pd.to_datetime(data1.DatesAtStartOfPeriod[-1].strftime('%Y-%m-%d'))
 
-    country=metaData.GetFirstValue("Region")
-
     if metaData.GetFirstValue("Frequency")=='quarterly':
         dates1=pd.date_range(seriesStartDate, seriesEndDate, freq="QS")
+        freq = 'quarterly'
+
+    elif metaData.GetFirstValue("Frequency")=='annual':
+        print("in annual data")
+        dates1=pd.date_range(seriesStartDate, seriesEndDate, freq="AS")
+        freq = 'annual'
+
+    elif metaData.GetFirstValue("Frequency")=='monthly':
+        print("in monthly data")
+        dates1=pd.date_range(seriesStartDate, seriesEndDate, freq="MS")
+        freq = 'monthly'
+
     else:
         print(metaData.GetFirstValue("Frequency"))
 
-    return(dates1)
+    return(dates1, freq)
+
+
+# def collectSeriesMetaData(myseries, d):
+#
+#     data1 = d.FetchOneSeries(myseries)
+#
+#     metaData=data1.Metadata
+#     print("Meta Values: ", metaData.GetFirstValue("Frequency"))
+#     #print("First date: ",  data1.DatesAtStartOfPeriod[0])
+#     print("First date: ", pd.to_datetime(data1.DatesAtStartOfPeriod[0].strftime('%Y-%m-%d')))
+#     seriesStartDate = pd.to_datetime(data1.DatesAtStartOfPeriod[0].strftime('%Y-%m-%d'))
+#     seriesEndDate = pd.to_datetime(data1.DatesAtStartOfPeriod[-1].strftime('%Y-%m-%d'))
+#
+#     country=metaData.GetFirstValue("Region")
+#
+#     if metaData.GetFirstValue("Frequency")=='quarterly':
+#         dates1=pd.date_range(seriesStartDate, seriesEndDate, freq="QS")
+#     else:
+#         print(metaData.GetFirstValue("Frequency"))
+#
+#     return(dates1)
 
 
 

@@ -141,11 +141,11 @@ def plotOneSeries(seriesName):
 
     return(None)
 
-keepTrack = []
+
 # changing the rc parameters and plotting a line plot
 plt.rcParams['figure.figsize'] = [18, 12]
 
-
+keepTrack = []
 def plotAllSectorSeries(seriesName):
 
     values=getMacrobondSeries(seriesName, connectMacrobond())

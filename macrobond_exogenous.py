@@ -3,36 +3,7 @@ import statsmodels.tsa.seasonal
 
 from base_functions import *
 from os import path
-
-
-def collectSeriesMetaData(myseries, d):
-
-    data1 = d.FetchOneSeries(myseries)
-
-    metaData=data1.Metadata
-    print("Meta Values: ", metaData.GetFirstValue("Frequency"))
-
-    seriesStartDate = pd.to_datetime(data1.DatesAtStartOfPeriod[0].strftime('%Y-%m-%d'))
-    seriesEndDate = pd.to_datetime(data1.DatesAtStartOfPeriod[-1].strftime('%Y-%m-%d'))
-
-    if metaData.GetFirstValue("Frequency")=='quarterly':
-        dates1=pd.date_range(seriesStartDate, seriesEndDate, freq="QS")
-        freq = 'quarterly'
-
-    elif metaData.GetFirstValue("Frequency")=='annual':
-        print("in annual data")
-        dates1=pd.date_range(seriesStartDate, seriesEndDate, freq="AS")
-        freq = 'annual'
-
-    elif metaData.GetFirstValue("Frequency")=='monthly':
-        print("in monthly data")
-        dates1=pd.date_range(seriesStartDate, seriesEndDate, freq="MS")
-        freq = 'monthly'
-
-    else:
-        print(metaData.GetFirstValue("Frequency"))
-
-    return(dates1, freq)
+plt.rcParams['figure.figsize'] = [18, 12]
 
 
 def sliceMacrobondCountryName_Exogenous(seriesName, varName):
@@ -324,11 +295,6 @@ def plotOneSeries(seriesName, varName):
     return(None)
 
 
-keepTrack = []
-# changing the rc parameters and plotting a line plot
-plt.rcParams['figure.figsize'] = [18, 12]
-
-
 def plotAllSectorSeries(seriesName):
 
     values=getMacrobondSeries(seriesName, connectMacrobond())
@@ -349,84 +315,24 @@ def plotAllSectorSeries(seriesName):
 
     plt.text(y=values[-1], x= dt.date(2023, 1, 1), s=countryName)
     plt.title(sectorName + ": All Countries")
-    plt.savefig("figures/1_" + sectorName + "_AllCounties" + '.png')
+    plt.savefig("figures/1_exogenous_" + sectorName + "_AllCounties" + '.png')
 
     return(None)
 
 
 
+yearlydata = pd.read_csv("Exogenous_Yearly.csv")
+print(yearlydata)
+exogVars = ["GDP_total","Consumption","Population","Housing_Prices", "CPI"]
+
+yearlycolumnsConsumption = [x for x in yearlydata.columns if "Consumption" in x]
+lncons =  np.log(yearlydata[yearlycolumnsConsumption])
+plt.plot(lncons)
+plt.show()
 
 
-#
-# def deleteallFiles():
-#     import os, shutil
-#     folder = 'figures/'
-#     for filename in os.listdir(folder):
-#         file_path = os.path.join(folder, filename)
-#         try:
-#             if os.path.isfile(file_path) or os.path.islink(file_path):
-#                 os.unlink(file_path)
-#             elif os.path.isdir(file_path):
-#                 shutil.rmtree(file_path)
-#         except Exception as e:
-#             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-# def collectData_monthly(seriesName, varName):
-#
-#     print(seriesName)
-#
-#     values = getMacrobondSeries(seriesName, connectMacrobond())
-#
-#     # create dataframe
-#     seriesDates, freq = collectSeriesMetaData(seriesName, connectMacrobond())
-#
-#     df_values = pd.DataFrame(values, index=seriesDates)
-#
-#     sectorName = sliceMacrobondExogenousName(seriesName,varName)
-#     countryName = sliceMacrobondCountryName_Exogenous(seriesName,varName)
-#
-#     df_values.columns = [countryName + "_" + sectorName]
-#
-#     return (df_values)
-#
-#
-# def collectData_quarterly(seriesName, varName):
-#
-#     print(seriesName)
-#
-#     values = getMacrobondSeries(seriesName, connectMacrobond())
-#
-#     # create dataframe
-#     seriesDates, freq = collectSeriesMetaData(seriesName, connectMacrobond())
-#
-#     df_values = pd.DataFrame(values, index=seriesDates)
-#
-#     sectorName = sliceMacrobondExogenousName(seriesName,varName)
-#     countryName = sliceMacrobondCountryName_Exogenous(seriesName,varName)
-#
-#     df_values.columns = [countryName + "_" + sectorName]
-#
-#     return (df_values)
-#
-#
-# def collectData_annual(seriesName, varName):
-#
-#     print(seriesName)
-#
-#     values = getMacrobondSeries(seriesName, connectMacrobond())
-#
-#     # dataframe
-#     seriesDates = collectSeriesMetaData(seriesName, connectMacrobond())
-#
-#     df_values = pd.DataFrame(values, index=seriesDates[0])
-#
-#     sectorName = sliceMacrobondExogenousName(seriesName, varName)
-#     countryName = sliceMacrobondCountryName_Exogenous(seriesName, varName)
-#
-#     df_values.columns = [countryName + "_" + sectorName]
-#
-#     return (df_values)
-#
+
 
 
 def collectData_general(seriesName, varName, freq):
@@ -482,12 +388,12 @@ def collectData_getFreq(data1):
             print("freq not known")
 
 
-data2 = collectData_getFreq(allData)
+#data2 = collectData_getFreq(allData)
 
-pd.concat(all_quartData, axis=1).to_csv("Exogenous_Quarterly.csv")
-pd.concat(all_yearData, axis=1).to_csv("Exogenous_Yearly.csv")
-pd.concat(all_monthlyData, axis=1).to_csv("Exogenous_Monthly.csv")
-
+# pd.concat(all_quartData, axis=1).to_csv("Exogenous_Quarterly.csv")
+# pd.concat(all_yearData, axis=1).to_csv("Exogenous_Yearly.csv")
+# pd.concat(all_monthlyData, axis=1).to_csv("Exogenous_Monthly.csv")
+#
 
 
 
