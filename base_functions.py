@@ -22,7 +22,7 @@ def getMacrobondSeries(myseries, connect):
     data1 = connect.FetchOneSeries(myseries)
     return(data1.Values)
 
-def collectSeriesMetaData(myseries, d):
+def collectSeriesMetaData(myseries, d=None):
 
     data1 = d.FetchOneSeries(myseries)
 
