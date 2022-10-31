@@ -1,5 +1,4 @@
 import pandas as pd
-import statsmodels.tsa.seasonal
 
 from base_functions import *
 from os import path
@@ -65,11 +64,10 @@ def sliceMacrobondCountryName_Exogenous(seriesName, varName):
             "eehp": "Estonia",
 
             "eamq": "Euro Area",
-            "eahp": "Euro Area",
             "eaam": "Euro Area",
             "eap1": "Euro Area",
-            "ehap": "Euro Area",
             "euhp": "Euro Area",
+            "eahp": "Euro Area",
 
             "fimq": "Finland",
             "fiam": "Finland",
@@ -131,7 +129,7 @@ def sliceMacrobondCountryName_Exogenous(seriesName, varName):
             "mtp1": "Malta",
             "mthp": "Malta",
 
-            "meam": "Montenego",
+            "meam": "Montenegro",
 
             "nlmq": "Netherlands",
             "nlam": "Netherlands",
@@ -211,7 +209,7 @@ def sliceMacrobondCountryName_Exogenous(seriesName, varName):
             "bgp": "Bulgaria",
             "chp": "Switzerland",
             "cyp": "Cyprus",
-            "czp": "Czech",
+            "czp": "Czech Republic",
             "dep": "Germany",
             "dkp": "Denmark",
             "eep": "Estonia",
@@ -230,7 +228,7 @@ def sliceMacrobondCountryName_Exogenous(seriesName, varName):
             "lup": "Luxembourg",
             "lvp": "Latvia",
             "mep": "Montenegro",
-            "mkp": "North_Macedonia",
+            "mkp": "North Macedonia",
             "nlp": "Netherlands",
             "nop": "Norway",
             "plp": "Poland",
@@ -270,7 +268,8 @@ def sliceMacrobondExogenousName(seriesName, varName):
     else:
         sector1 = seriesName[-8:-4]
         dictExog={
-            "pric": "CPI"
+            "pric": "CPI",
+            "ric0": "CPI"
         }
         return (dictExog[sector1])
 
@@ -321,19 +320,14 @@ def plotAllSectorSeries(seriesName):
 
 
 
-yearlydata = pd.read_csv("Exogenous_Yearly.csv")
+yearlydata = pd.read_csv("data/Exogenous_Yearly.csv")
 print(yearlydata)
 exogVars = ["GDP_total","Consumption","Population","Housing_Prices", "CPI"]
 
 yearlycolumnsConsumption = [x for x in yearlydata.columns if "Consumption" in x]
 lncons =  np.log(yearlydata[yearlycolumnsConsumption])
-plt.plot(lncons)
-plt.show()
-
-
-
-
-
+# plt.plot(lncons)
+# plt.show()
 
 def collectData_general(seriesName, varName, freq):
     print(seriesName)
@@ -370,7 +364,7 @@ def collectData_getFreq(data1):
         seriesDates, freq = collectSeriesMetaData(seriesName, connectMacrobond())
 
         #plot data
-        plotOneSeries(seriesName, varName)
+        #plotOneSeries(seriesName, varName)
 
         if freq == "quarterly":
             print("In quarterly")
@@ -387,12 +381,54 @@ def collectData_getFreq(data1):
         else:
             print("freq not known")
 
+# this generate the data with the names below,
+collectData_getFreq(allData)
+############################################
 
-#data2 = collectData_getFreq(allData)
+#quarterlhy
+data10 = pd.concat(all_quartData, axis=1)
+data10.index = pd.DatetimeIndex(data10.index)
+data10.to_csv("data/Exogenous_Quarterly.csv")
+#yearly
+data11 = pd.concat(all_yearData, axis=1)
+data11.index = pd.DatetimeIndex(data11.index)
+data11.to_csv("data/Exogenous_Yearly.csv")
+#monthly
+data12 = pd.concat(all_monthlyData, axis=1)
+data12.index = pd.DatetimeIndex(data12.index)
+data12.to_csv("data/Exogenous_Monthly.csv")
 
-# pd.concat(all_quartData, axis=1).to_csv("Exogenous_Quarterly.csv")
-# pd.concat(all_yearData, axis=1).to_csv("Exogenous_Yearly.csv")
-# pd.concat(all_monthlyData, axis=1).to_csv("Exogenous_Monthly.csv")
+
+count_exog = allData[['Country', 'Variable']].groupby("Country").count()
+count_exog.sort_values(by=["Country"]).to_csv("count_exogenous_vars.csv")
+
+countries_quarterly = [x.split("_")[0] for x in data10.columns]
+#print(countries_quarterly)
+countries_yearly = [x.split("_")[0] for x in data11.columns]
+#print(countries_yearly)
+countries_monthly = [x.split("_")[0] for x in data12.columns]
+#print(countries_monthly)
+
+allEndogCountry = countries_quarterly + countries_yearly + countries_monthly
+
+my_dict = {i:allEndogCountry.count(i) for i in allEndogCountry}
+print(my_dict)
+exog_in_code = pd.DataFrame.from_dict(my_dict, orient='index')
+exog_in_code.sort_index()
+#print(exog_in_code.sort_values(by=['Country']))
+
+check_count = pd.merge(count_exog, exog_in_code,  left_index=True, right_index=True)
+check_count.columns =  ['countExcel', 'countCode']
+check_count['diff'] = check_count['countExcel'] - check_count['countCode']
+
+print(check_count)
+
+
+# pd.concat(all_quartData, axis=1).to_csv("data/Exogenous_Quarterly.csv")
+# all_yearData.index = pd.DatetimeIndex(all_yearData['Unnamed: 0'])
+# pd.concat(all_yearData, axis=1).to_csv("data/Exogenous_Yearly.csv")
+# all_monthlyData.index = pd.DatetimeIndex(all_monthlyData['Unnamed: 0'])
+# pd.concat(all_monthlyData, axis=1).to_csv("data/Exogenous_Monthly.csv")
 #
 
 
@@ -422,6 +458,11 @@ def readMacrobondDatatoDF_exogenous(dataNamesLocation, overwrite=True):
 dataNamesLocation ="data/macrobond_codes_international_sectormodel.xlsx"
 
 readMacrobondDatatoDF_exogenous(dataNamesLocation, overwrite=True)
+
+
+
+
+
 
 
 # # Create descriptive statistics per country, per series, save as a csv

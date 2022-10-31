@@ -1,0 +1,24 @@
+Outcomes of two models, one step ahead
+
+Granger-Newbold:
+    Not appropriate when models are nested
+    test the errors of two regressions (WE, p 87)
+    one step ahead forecasts
+    are the two regressions equal, looks a sum of squares, loss is quadratic
+
+Diebold-Mariano:
+    Not appropriate when models are nested
+
+
+
+Tests of structural change
+
+Chow test:
+    Test values before and after break (WE, p.104)
+
+Parameter instability:
+
+Endogenous breaks
+
+
+

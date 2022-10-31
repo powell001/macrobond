@@ -232,7 +232,10 @@ allData = pd.read_excel("data/macrobond_series_eu_industries.xlsx")
 
 data2 = collectData(allData)
 
-pd.concat(data2,  axis=1).to_csv("tmp2.csv")
+data3=pd.concat(data2,  axis=1)
+data3.index = pd.to_datetime(data3.index)
+
+data3.to_csv("tmp2.csv")
 
 # gp1sum=allData.groupby('Country').sum()
 # print(gp1sum)
@@ -256,129 +259,3 @@ for i in range(0,allData.shape[0]):
 
 
 
-####################################################
-# import pmdarima as pm
-# from pmdarima.preprocessing import BoxCoxEndogTransformer
-# from pmdarima.pipeline import Pipeline
-#
-# # Plot an auto-correlation:
-# #pm.plot_acf(pm.c(values))
-#
-# model1 = pm.auto_arima(values, start_p=1, start_q=1,
-#                              max_p=4, max_q=4, m=4,
-#                              start_P=0, seasonal=True,
-#                              d=1, D=1, trace=False,
-#                              error_action='ignore',  # don't want to know if an order does not work
-#                              suppress_warnings=True,  # don't want convergence warnings
-#                              stepwise=True)  # set to stepwise
-#
-# print(model1.summary())
-#
-# train, test = values[:120], values[120:]
-#
-# pipeline = Pipeline([
-#     ("boxcox", BoxCoxEndogTransformer()),
-#     ("model", model1)
-# ])
-#
-# pipeline.fit(train)
-# print(pipeline.predict(5))
-
-# wineind = pm.datasets.load_wineind()
-# print(len(wineind))
-
-#
-# raw1 = pd.read_excel("macrobond_codes_international_sectormodel.xlsx")
-#
-# countries=raw1["Country"]
-# print(countries)
-#
-# #print(raw1[raw1.Country=="Sweden"])
-# ls1 = []
-# countryList = []
-# countryDFList = []
-# for i in countries:
-#     print(i)
-#     #country = raw1.iloc[i, 1]
-#     # if country in countryList:
-#     #     break
-#     # countryList.append(country)
-#
-#     countryData = raw1[raw1.Country == i]
-#
-#     print(countryData)
-#
-#     data1 = []
-#     for j in range(0,countryData.shape[0]):
-#         macbondCode = countryData.Macrobond_series_id.iloc[j]
-#         print(macbondCode)
-#         Variable = countryData.Variable.iloc[j]
-#         print(Variable)
-#
-#
-#         s = d.FetchOneSeries(macbondCode)
-#         print(len(s.Values))
-#         data1.append(pd.DataFrame(s.Values))
-#
-#     countryDf = pd.concat(data1, axis=1, ignore_index=True)
-#     countryDf.columns=countryData['Variable']
-#     countryDf['Country']=countryData['Country']
-#     countryDFList.append(countryDf)
-#
-#
-# zz=pd.concat(countryDFList)
-# zz.to_csv("tmp.csv")
-
-    #print(raw1.iloc[i,0:3])
-    #s = d.FetchOneSeries(one)
-    #print(s)
-    #values = s.Values
-    #print(values)
-    #ls1.append(pd.DataFrame({values))
-
-# print(countryDf.head(20))
-#
-# print(isinstance(countryDf, pd.DataFrame))
-#
-# countryDf['tmp']='aaa'
-# print(countryDf)
-
-#dd = countryDf['Country']='Austria'
-#print(dd)
-
-# int(pd.concat(ls1))
-
-# values = s.Values
-# print(values)
-#
-# plt.plot(values)
-#
-# #plt.imshow(img.reshape((28, 28)))
-#
-# plt.show()
-# import pmdarima as pm
-#
-# data = pm.datasets.load_wineind()
-# train, test = data[:150], data[150:]
-#
-# # Fit two different ARIMAs
-# m1 = pm.auto_arima(train, error_action='ignore', seasonal=True, m=1)
-# m12 = pm.auto_arima(train, error_action='ignore', seasonal=True, m=12)
-#
-# import matplotlib.pyplot as plt
-# import numpy as np
-#
-# fig, axes = plt.subplots(1, 2, figsize=(12, 8))
-# x = np.arange(test.shape[0])
-#
-# # Plot m=1
-# axes[0].scatter(x, test, marker='x')
-# axes[0].plot(x, m1.predict(n_periods=test.shape[0]))
-# axes[0].set_title('Test samples vs. forecasts (m=1)')
-#
-# # Plot m=12
-# axes[1].scatter(x, test, marker='x')
-# axes[1].plot(x, m12.predict(n_periods=test.shape[0]))
-# axes[1].set_title('Test samples vs. forecasts (m=12)')
-#
-# plt.show()

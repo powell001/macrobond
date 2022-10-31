@@ -2,6 +2,7 @@ import win32com.client
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+from os import path
 import pytest
 
 # load per country
@@ -50,6 +51,27 @@ def collectSeriesMetaData(myseries, d=None):
         print(metaData.GetFirstValue("Frequency"))
 
     return(dates1, freq)
+
+def readMacrobondDatatoDF(dataNamesLocation, overwrite=True):
+
+    ''' 1. if the sectorDataAll.csv file doesn't exist, create it
+        2. if sectorDataAll.csv does exist, but you want to overwrite it, create it with overwrite = True
+        3. if sectorDataAll.csv does exist, and you dont want to overwrite it, set overwrite = False
+    '''
+
+    if (path.exists("data/sectorDataAll.csv") == False):
+        allData = pd.read_excel(dataNamesLocation)
+        individualSeries = collectData(allData)
+        pd.concat(individualSeries, axis=1).to_csv("data/sectorDataAll.csv")
+        print("Created file data/sectorDataAll.csv")
+    elif (path.exists("data/sectorDataAll.csv") == False) and (overwrite == True):
+        allData = pd.read_excel(dataNamesLocation)
+        individualSeries = collectData(allData)
+        pd.concat(individualSeries, axis=1).to_csv("data/sectorDataAll.csv")
+        print("Created file data/sectorDataAll.csv")
+    else:
+        print("File /data/sectorDataAll.csv exists")
+
 
 
 # def collectSeriesMetaData(myseries, d):
