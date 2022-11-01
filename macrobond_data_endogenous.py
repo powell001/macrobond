@@ -105,7 +105,6 @@ def sliceMacrobondSectorName(seriesName):
     :return: human readable version of sector name
     """
 
-
     # this uniquely defines the series
     sector1 = seriesName[:-4]
 
@@ -167,10 +166,10 @@ def endog_checks(excel, endo_data):
     assert all(count_sectors['Sector'].tolist()), "Data incomplete, count of sectors differ"
 
 
-allData_Excel = pd.read_excel("data/macrobond_series_eu_industries.xlsx")
+allData_Excel = pd.read_excel("data/OriginalData/macrobond_series_eu_industries.xlsx")
 data = collectData(allData_Excel)
 endogenous_data_df = pd.concat(data, axis=1)
 endogenous_data_df.index = pd.to_datetime(endogenous_data_df.index)
-endogenous_data_df.to_csv("data/ProcessedData/endogenous_data_df.csv")
+endogenous_data_df.to_csv("data/ProcessedData/Endogenous_data_df.csv")
 
 endog_checks(allData_Excel, endogenous_data_df)

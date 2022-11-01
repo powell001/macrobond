@@ -1,20 +1,14 @@
-import pandas as pd
-
 from base_functions import *
-import datetime as dt
-
-plt.rcParams['figure.figsize'] = [10, 8]
 
 
 def sliceMacrobondCountryName_Exogenous(seriesName, varName):
-    '''
+    """
         take last four characters of series name, this appears to be the country name,
         convert to human readable form.
 
         unfortunately, CPI uses a different identifier, so for CPI take the first three
         characters of a series name.
-    '''
-
+    """
 
     if varName != "CPI":
         country1 = seriesName[-4:]
@@ -26,10 +20,10 @@ def sliceMacrobondCountryName_Exogenous(seriesName, varName):
             "atp1": "Austria",
             "athp": "Austria",
 
-            "bemq": "Belguim",
-            "beam": "Belguim",
-            "bep1": "Belguim",
-            "behp": "Belguim",
+            "bemq": "Belgium",
+            "beam": "Belgium",
+            "bep1": "Belgium",
+            "behp": "Belgium",
 
             "baam": "Bosnia",
 
@@ -194,7 +188,7 @@ def sliceMacrobondCountryName_Exogenous(seriesName, varName):
             "ukhp": "United Kingdom"
 
         }
-        return (dictCountry[country1])
+        return dictCountry[country1]
     else:  # i.e., for CPI
         country1 = seriesName[:3]
 
@@ -203,7 +197,7 @@ def sliceMacrobondCountryName_Exogenous(seriesName, varName):
             "alp": "Albania",
             "atp": "Austria",
             "bap": "Bosnia",
-            "bep": "Belguim",
+            "bep": "Belgium",
             "bgp": "Bulgaria",
             "chp": "Switzerland",
             "cyp": "Cyprus",
@@ -240,15 +234,14 @@ def sliceMacrobondCountryName_Exogenous(seriesName, varName):
             "trp": "Turkey"
         }
 
-        return (dictCountry[country1])
+        return dictCountry[country1]
 
 
 def sliceMacrobondExogenousName(seriesName, varName):
-    '''
+    """
         remove last four characters of series name, this appears to be the sector name.
         again, CPI is different, and the 'center' of the series name needs to be plucked out.
-    '''
-
+    """
 
     if varName != 'CPI':
         sector1 = seriesName[:-4]
@@ -259,7 +252,7 @@ def sliceMacrobondExogenousName(seriesName, varName):
             "totali15q": "Housing_Prices"
         }
 
-        return (dictExog[sector1])
+        return dictExog[sector1]
 
     else:
         sector1 = seriesName[-8:-4]
@@ -267,51 +260,7 @@ def sliceMacrobondExogenousName(seriesName, varName):
             "pric": "CPI",
             "ric0": "CPI"
         }
-        return (dictExog[sector1])
-
-
-def plotOneSeries(seriesName, varName):
-    values = getMacrobondSeries(seriesName, connectMacrobond())
-    values = np.log(values)
-
-    seriesDates, freq = collectSeriesMetaData(seriesName, connectMacrobond())
-
-    countryName = sliceMacrobondCountryName_Exogenous(seriesName, varName)
-    sectorName = sliceMacrobondExogenousName(seriesName, varName)
-
-    df1 = pd.DataFrame(values, index=seriesDates)
-    plt.plot(df1)
-    plt.title(sectorName + ": " + countryName)
-
-    plt.savefig("figures/figures_exogenous/exogenous_" + sectorName + "_" + countryName + '.png')
-    # Needed to
-    plt.close()
-
-    return (None)
-
-
-def plotAllSectorSeries(seriesName):
-    values = getMacrobondSeries(seriesName, connectMacrobond())
-    values = np.log(values)
-
-    seriesDates, freq = collectSeriesMetaData(seriesName, connectMacrobond())
-
-    countryName = sliceMacrobondCountryName(seriesName)
-
-    sectorName = sliceMacrobondSectorName(seriesName)
-
-    if sectorName not in keepTrack:
-        plt.close()
-
-    keepTrack.append(sectorName)
-    df1 = pd.DataFrame(values, index=seriesDates)
-    plt.plot(df1)
-
-    plt.text(y=values[-1], x=dt.date(2023, 1, 1), s=countryName)
-    plt.title(sectorName + ": All Countries")
-    plt.savefig("figures/exogenous_plots/1_exogenous_" + sectorName + "_AllCounties" + '.png')
-
-    return (None)
+        return dictExog[sector1]
 
 
 def collectData_general(seriesName, varName, freq):
@@ -330,20 +279,18 @@ def collectData_general(seriesName, varName, freq):
 
     df_values.columns = [countryName + "_" + sectorName]
 
-    return (df_values)
+    return df_values
 
 
-all_quartData = []
-all_yearData = []
-all_monthlyData = []
-def collectData_getFreq(data1, makeplots=False):
+def collectData_getFreq(data1):
+    all_quartData = []
+    all_yearData = []
+    all_monthlyData = []
+
     for index, row in data1.iterrows():
         seriesName = row['Macrobond_series_id']
         varName = row['Variable']
         seriesDates, freq = collectSeriesMetaData(seriesName, connectMacrobond())
-
-        if makeplots==True:
-            plotOneSeries(seriesName, varName)
 
         if freq == "quarterly":
             print("In quarterly")
@@ -360,22 +307,21 @@ def collectData_getFreq(data1, makeplots=False):
         else:
             print("freq not known")
 
-    return (all_quartData, all_yearData, all_monthlyData)
+    return all_quartData, all_yearData, all_monthlyData
 
-
-def dataCheckSeriesNames(all_quartData, all_yearData, all_monthlyData):
+def dataCheckSeriesNames(all_quartData2, all_yearData2, all_monthlyData2):
     # quarterlhy
-    data10 = pd.concat(all_quartData, axis=1)
+    data10 = pd.concat(all_quartData2, axis=1)
     data10.index = pd.DatetimeIndex(data10.index)
-    data10.to_csv("data/Exogenous_Quarterly.csv")
+    data10.to_csv("data/ProcessedData/Exogenous_Quarterly.csv")
     # yearly
-    data11 = pd.concat(all_yearData, axis=1)
+    data11 = pd.concat(all_yearData2, axis=1)
     data11.index = pd.DatetimeIndex(data11.index)
-    data11.to_csv("data/Exogenous_Yearly.csv")
+    data11.to_csv("data/ProcessedData/Exogenous_Yearly.csv")
     # monthly
-    data12 = pd.concat(all_monthlyData, axis=1)
+    data12 = pd.concat(all_monthlyData2, axis=1)
     data12.index = pd.DatetimeIndex(data12.index)
-    data12.to_csv("data/Exogenous_Monthly.csv")
+    data12.to_csv("data/ProcessedData/Exogenous_Monthly.csv")
 
     count_exog = allData[['Country', 'Variable']].groupby("Country").count().sort_values(by=["Country"])
 
@@ -392,10 +338,12 @@ def dataCheckSeriesNames(all_quartData, all_yearData, all_monthlyData):
     check_count.columns = ['countExcel', 'countCode']
     check_count['diff'] = check_count['countExcel'] - check_count['countCode']
 
+    assert all(check_count['diff'].tolist())==0, "There are differences between the Excel sheet and the processed data"
+
     print(check_count)
 
 
 deleteallFiles("exogenous")
-allData = pd.read_excel("data/macrobond_codes_international_sectormodel.xlsx")
-all_quartData1, all_yearData1, all_monthlyData1 = collectData_getFreq(allData, makeplots=True)
+allData = pd.read_excel("data/OriginalData/macrobond_codes_international_sectormodel.xlsx")
+all_quartData1, all_yearData1, all_monthlyData1 = collectData_getFreq(allData)
 dataCheckSeriesNames(all_quartData1, all_yearData1, all_monthlyData1)
