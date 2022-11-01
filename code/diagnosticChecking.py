@@ -1,7 +1,4 @@
-import pandas as pd
-import statsmodels.tsa.seasonal
-
-from base_functions import *
+from code.base_functions import *
 from os import path
 import scipy
 
@@ -14,18 +11,18 @@ def readMacrobondDatatoDF(dataNamesLocation, overwrite=True):
         3. if sectorDataAll.csv does exist, and you dont want to overwrite it, set overwrite = False
     '''
 
-    if (path.exists("data/sectorDataAll.csv") == False):
+    if (path.exists("../data/ProcessedData/Endogenous_data_df.csv") == False):
         allData = pd.read_excel(dataNamesLocation)
         individualSeries = collectData(allData)
         pd.concat(individualSeries, axis=1).to_csv("data/sectorDataAll.csv")
-        print("Created file data/sectorDataAll.csv")
-    elif (path.exists("data/sectorDataAll.csv") == False) and (overwrite == True):
+        print("Created file data/ProcessedData/Endogenous_data_df.csv")
+    elif (path.exists("../data/ProcessedData/Endogenous_data_df.csv") == False) and (overwrite == True):
         allData = pd.read_excel(dataNamesLocation)
         individualSeries = collectData(allData)
-        pd.concat(individualSeries, axis=1).to_csv("data/sectorDataAll.csv")
-        print("Created file data/sectorDataAll.csv")
+        pd.concat(individualSeries, axis=1).to_csv("data/ProcessedData/Endogenous_data_df.csv")
+        print("Created file data/ProcessedData/Endogenous_data_df.csv")
     else:
-        print("File /data/sectorDataAll.csv exists")
+        print("File /data/ProcessedData/Endogenous_data_df.csv exists")
 
 def getCountrySectorData(data, countryName):
     getCols = [col for col in data.columns if countryName in col]
@@ -127,13 +124,13 @@ def calculateSeriesStatistics(data, countries1):
                                          "date_created"])
         allcountries.append(df)
 
-    pd.concat(allcountries).to_csv("basicStats.csv", index=False, float_format='%.2f')
+    pd.concat(allcountries).to_csv("results/basicStats.csv", index=False, float_format='%.2f')
 
 # creates or recreates data from macrobond
-dataNamesLocation ="data/macrobond_series_eu_industries.xlsx"
+dataNamesLocation ="data/OriginalData/macrobond_series_eu_industries.xlsx"
 readMacrobondDatatoDF(dataNamesLocation, overwrite=False)
 
 # data description file
 countries1 = allCountries()
-data1 = pd.read_csv("data/sectorDataAll.csv", parse_dates=True, index_col=[0])
+data1 = pd.read_csv("data/ProcessedData/Endogenous_data_df.csv", parse_dates=True, index_col=[0])
 calculateSeriesStatistics(data1, countries1)

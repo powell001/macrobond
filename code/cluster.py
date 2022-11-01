@@ -1,7 +1,4 @@
-import matplotlib.pyplot as plt
-import pandas as pd
-
-from base_functions import *
+from code.base_functions import *
 
 #https://towardsdatascience.com/hierarchical-clustering-and-k-means-clustering-on-country-data-84b2bf54d282
 
@@ -13,7 +10,6 @@ df1=pd.read_csv("tmp2.csv")
 #print(df1.head())
 
 data1=df1.iloc[-10:,:].mean()
-
 
 #data1.to_csv("tmp3.csv")
 country_sector=data1.index.str.split("_")

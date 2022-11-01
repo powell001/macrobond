@@ -313,15 +313,15 @@ def dataCheckSeriesNames(all_quartData2, all_yearData2, all_monthlyData2):
     # quarterlhy
     data10 = pd.concat(all_quartData2, axis=1)
     data10.index = pd.DatetimeIndex(data10.index)
-    data10.to_csv("data/ProcessedData/Exogenous_Quarterly.csv")
+    data10.to_csv(processed_data + "Exogenous_Quarterly.csv")
     # yearly
     data11 = pd.concat(all_yearData2, axis=1)
     data11.index = pd.DatetimeIndex(data11.index)
-    data11.to_csv("data/ProcessedData/Exogenous_Yearly.csv")
+    data11.to_csv(processed_data + "Exogenous_Yearly.csv")
     # monthly
     data12 = pd.concat(all_monthlyData2, axis=1)
     data12.index = pd.DatetimeIndex(data12.index)
-    data12.to_csv("data/ProcessedData/Exogenous_Monthly.csv")
+    data12.to_csv(processed_data + "Exogenous_Monthly.csv")
 
     count_exog = allData[['Country', 'Variable']].groupby("Country").count().sort_values(by=["Country"])
 
@@ -342,8 +342,10 @@ def dataCheckSeriesNames(all_quartData2, all_yearData2, all_monthlyData2):
 
     print(check_count)
 
+processed_data = "data/ProcessedData/"
+excel_source = "data/OriginalData/"
 
 deleteallFiles("exogenous")
-allData = pd.read_excel("data/OriginalData/macrobond_codes_international_sectormodel.xlsx")
+allData = pd.read_excel(excel_source + "macrobond_codes_international_sectormodel.xlsx")
 all_quartData1, all_yearData1, all_monthlyData1 = collectData_getFreq(allData)
 dataCheckSeriesNames(all_quartData1, all_yearData1, all_monthlyData1)

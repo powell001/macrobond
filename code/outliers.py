@@ -127,7 +127,7 @@ def calculateSeriesDescription(data, countries1):
                                          "date_created"])
         allcountries.append(df)
 
-    pd.concat(allcountries).to_csv("basicStats.csv", index=False, float_format='%.2f')
+    pd.concat(allcountries).to_csv("../results/basicStats.csv", index=False, float_format='%.2f')
 
 
 # creates or recreates data from macrobond
