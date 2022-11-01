@@ -15,7 +15,6 @@ def sliceMacrobondCountryName_Exogenous(seriesName, varName):
         characters of a series name.
     '''
 
-    # Todo if not in dictionary ...
 
     if varName != "CPI":
         country1 = seriesName[-4:]
@@ -250,7 +249,6 @@ def sliceMacrobondExogenousName(seriesName, varName):
         again, CPI is different, and the 'center' of the series name needs to be plucked out.
     '''
 
-    # Todo if not in dictionary ...
 
     if varName != 'CPI':
         sector1 = seriesName[:-4]

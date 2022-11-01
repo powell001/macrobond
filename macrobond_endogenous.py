@@ -135,7 +135,7 @@ def plotOneSeries(seriesName):
     plt.plot(df1)
     plt.title(sectorName + ": " + countryName)
 
-    plt.savefig("figures/" + sectorName + "_" + countryName + '.png')
+    plt.savefig("figures/figures_endogenous/endogenous_" + sectorName + "_" + countryName + '.png')
     # Needed to
     plt.close()
 
@@ -143,7 +143,7 @@ def plotOneSeries(seriesName):
 
 
 # changing the rc parameters and plotting a line plot
-plt.rcParams['figure.figsize'] = [18, 12]
+plt.rcParams['figure.figsize'] = [10, 8]
 
 keepTrack = []
 def plotAllSectorSeries(seriesName):
@@ -166,22 +166,10 @@ def plotAllSectorSeries(seriesName):
 
     plt.text(y=values[-1], x= dt.date(2023, 1, 1), s=countryName)
     plt.title(sectorName + ": All Countries")
-    plt.savefig("figures/1_" + sectorName + "_AllCounties" + '.png')
+    plt.savefig("figures/figures_endogenous/1_" + sectorName + "_AllCounties" + '.png')
 
     return(None)
 
-def deleteallFiles():
-    import os, shutil
-    folder = 'figures/'
-    for filename in os.listdir(folder):
-        file_path = os.path.join(folder, filename)
-        try:
-            if os.path.isfile(file_path) or os.path.islink(file_path):
-                os.unlink(file_path)
-            elif os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-        except Exception as e:
-            print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 allSeries = []
 def collectData(data1):
@@ -224,7 +212,7 @@ def sortDataCountries(data1):
     #data1.groupby(["Country"])
 
 
-deleteallFiles()
+deleteallFiles("endogenous")
 import datetime as dt
 allData = pd.read_excel("data/macrobond_series_eu_industries.xlsx")
 # gp1count=allData.groupby('Country').count()

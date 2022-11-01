@@ -16,7 +16,6 @@ import pytest
 
 def connectMacrobond():
     connection = win32com.client.Dispatch("Macrobond.Connection")
-    print("API version: ", connection.Version)
     return(connection.Database)
 
 def getMacrobondSeries(myseries, connect):
@@ -228,9 +227,15 @@ def plotAllSectorSeries(seriesName):
 
     return(None)
 
-def deleteallFiles():
+def deleteallFiles(filename):
     import os, shutil
-    folder = 'figures/'
+    if filename == "endogenous":
+        folder = 'figures/figures_endogenous/'
+    elif filename == "exogenous":
+        folder = 'figures/figures_exogenous/'
+    else:
+        print("Folder to delete files not found")
+
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
